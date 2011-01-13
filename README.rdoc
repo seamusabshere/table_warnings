@@ -1,0 +1,31 @@
+=table_warnings
+
+NOTE: only for activerecord right now because it uses <tt>count(:conditions => [...])</tt>
+
+==How to define warning signs
+
+    class AutomobileMake < ActiveRecord::Base
+      extend TableWarnings
+      table_warnings do
+        blank :name
+        blank :fuel_efficiency
+        size :hundreds
+      end
+    end
+
+==How to see warnings for the table
+
+    ?> AutomobileMake.table_warnings
+    => [ "Table is not of expected size" ]
+
+==Defense
+
+* This is not the same as validations, because those interfere with the saving of individual records
+
+==Self-criticism
+
+* Weird to use same class method for both setting and getting
+* Maybe this should work work on any class that defines <tt>.all</tt>
+* Maybe you shouldn't have to <tt>extend TableWarnings</tt> all the time
+
+Copyright 2011 Seamus Abshere

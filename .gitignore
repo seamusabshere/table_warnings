@@ -1,0 +1,5 @@
+pkg/*
+*.gem
+.bundle
+rdoc/*
+data_miner.log
