@@ -28,7 +28,7 @@ module TableWarnings
     end
     def warning
       unless allowed_range.include? table.count
-        "Table is not of expected size"
+        "Table is not of expected size (expected: #{allowed_range.to_s}, actual: #{table.count})"
       end
     end
   end
