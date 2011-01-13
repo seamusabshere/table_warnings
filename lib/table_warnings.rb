@@ -4,27 +4,26 @@ require 'table_warnings/signs/blank'
 require 'table_warnings/signs/size'
 
 module TableWarnings
-  # Used to define the warning signs and also get back the warnings.
+  # Get current warnings on the table.
+  def table_warnings
+    _table_warnings_hook.current_warnings
+  end
+  # Warn if there are blanks in a certain column.
   #
-  #     class AutomobileMake < ActiveRecord::Base
-  #       extend TableWarnings
-  #       table_warnings do
-  #         blank :name
-  #         blank :fuel_efficiency
-  #         size :hundreds
-  #       end
-  #     end
+  # Blank includes both NULL and "" (empty string)
+  def warn_if_blanks_in(column_name)
+    _table_warnings_hook.warn_of ::TableWarnings::Blank.new(self, column_name)
+  end
+  # Warn if the number of records falls out of an (approximate) range.
   #
-  # ...and to get them back...
-  #
-  #     ?> AutomobileMake.table_warnings
-  #     => [ "Table is not of expected size" ]
-  def table_warnings(&blk)
-    @@table_warnings_hook ||= ::TableWarnings::Hook.new self
-    if block_given?
-      @@table_warnings_hook.define_signs &blk
-    else
-      @@table_warnings_hook.return_warnings
-    end
+  # Approximations: :few, :tens, :dozens, :hundreds, :thousands, :hundreds_of_thousands, :millions
+  # Exact: pass a Range or a Numeric
+  def warn_unless_size_is(approximate_size)
+    _table_warnings_hook.warn_of ::TableWarnings::Size.new(self, approximate_size)
+  end
+  def _table_warnings_hook # :nodoc:
+    @table_warnings_hook ||= ::TableWarnings::Hook.new self
   end
 end
+
+::ActiveRecord::Base.extend ::TableWarnings

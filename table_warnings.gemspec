@@ -21,5 +21,4 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'fastercsv'
   s.add_development_dependency 'earth', '0.3.11'
   s.add_dependency 'activerecord' # for now
-  s.add_dependency 'blockenspiel'
 end

@@ -12,7 +12,7 @@ rescue ArgumentError
   ActiveRecord::Base.establish_connection(:adapter => "sqlite3", :dbfile => ":memory:")
 end
 require 'earth'
-Earth.init :automobile, :load_data_miner => true, :apply_schemas => true
+Earth.init :automobile, :apply_schemas => true
 $LOAD_PATH.unshift(File.dirname(__FILE__))
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 require 'table_warnings'

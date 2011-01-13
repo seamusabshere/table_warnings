@@ -3,7 +3,6 @@ PATH
   specs:
     table_warnings (0.0.1)
       activerecord
-      blockenspiel
 
 GEM
   remote: http://rubygems.org/
@@ -117,7 +116,6 @@ PLATFORMS
 
 DEPENDENCIES
   activerecord
-  blockenspiel
   earth (= 0.3.11)
   fastercsv
   table_warnings!
