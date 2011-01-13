@@ -4,10 +4,12 @@ class AutomobileMake < ActiveRecord::Base
   warn_if_blanks_in :name
   warn_if_blanks_in :fuel_efficiency
   warn_unless_size_is :hundreds
+  warn_unless_size_is 100..1000
 end
 
 class AutomobileFuelType < ActiveRecord::Base
   warn_unless_size_is :few
+  warn_unless_size_is 1..6
 end
 
 AutomobileMake.create! :name => '', :fuel_efficiency => nil, :fuel_efficiency_units => 'kilometres_per_litre'
@@ -22,7 +24,7 @@ class TestTableWarnings < Test::Unit::TestCase
     assert AutomobileMake.table_warnings.one? { |w| w =~ /blanks in.*fuel_efficiency.*column/ }
   end
   def test_warn_of_size_of_automobile_make
-    assert AutomobileMake.table_warnings.one? { |w| w =~ /expected.*size/ }
+    assert AutomobileMake.table_warnings.many? { |w| w =~ /expected.*size/ }
   end
   def test_dont_warn_of_size_of_automobile_fuel_type
     assert AutomobileFuelType.table_warnings.empty?
