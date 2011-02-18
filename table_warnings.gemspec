@@ -8,9 +8,9 @@ Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.authors     = ['Seamus Abshere']
   s.email       = ['seamus@abshere.net']
-  s.homepage    = 'http://github.com/seamusabshere/table_warnings'
-  s.summary     = %q{Validate an entire [ActiveRecord] table, checking for things like blank rows or total number of rows}
-  s.description = %q{It's called validations to remind people of per-record validations, but it works on the table, and is meant to be used after a table is completely populated.}
+  s.homepage    = 'https://github.com/seamusabshere/table_warnings'
+  s.summary     = %q{It's called validations to remind people of per-record validations, but it works on the table, and is meant to be used after a table is completely populated.}
+  s.description = %q{Validate an entire [ActiveRecord] table, checking for things like blank rows or total number of rows}
 
   s.rubyforge_project = 'table_warnings'
 

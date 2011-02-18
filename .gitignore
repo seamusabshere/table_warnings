@@ -3,3 +3,4 @@ pkg/*
 .bundle
 rdoc/*
 data_miner.log
+Gemfile.lock
