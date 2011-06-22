@@ -13,21 +13,31 @@ class AutomobileFuelType < ActiveRecord::Base
   warn_unless_size_is 1..6
 end
 
-AutomobileMake.create! :name => '', :fuel_efficiency => nil, :fuel_efficiency_units => 'kilometres_per_litre'
-AutomobileMake.create! :name => 'Alfa Romeo', :fuel_efficiency => 10.4075, :fuel_efficiency_units => 'kilometres_per_litre'
-
-AutomobileFuelType.create! :name => 'gas'
-AutomobileFuelType.create! :name => 'diesel'
-
 class TestTableWarnings < Test::Unit::TestCase
-  def test_warn_for_blanks_in_specific_columns
+  def setup
+    AutomobileMake.delete_all
+    AutomobileFuelType.delete_all
+  end
+  
+  def test_001_warn_for_blanks_in_specific_columns
+    AutomobileMake.create! :name => '       ', :fuel_efficiency => nil, :fuel_efficiency_units => 'kilometres_per_litre'
+    AutomobileMake.create! :name => 'Alfa Romeo', :fuel_efficiency => 10.4075, :fuel_efficiency_units => 'kilometres_per_litre'
     assert AutomobileMake.table_warnings.one? { |w| w =~ /blanks in.*name.*column/ }
     assert AutomobileMake.table_warnings.one? { |w| w =~ /blanks in.*fuel_efficiency.*column/ }
   end
-  def test_warn_of_size
+  
+  def test_002_warn_of_size
+    assert_equal 0, AutomobileMake.count
     assert AutomobileMake.table_warnings.many? { |w| w =~ /expected.*size/ }
   end
-  def test_warn_for_blanks_in_any_column
+
+  def test_003_warn_for_blanks_in_any_column
+    AutomobileFuelType.create! :name => 'gas'
     assert AutomobileFuelType.table_warnings.one? { |w| w =~ /blanks in.*code.*column/ }
+  end
+
+  def test_004_dont_treat_0_as_blank
+    AutomobileMake.create! :name => 'Acme', :fuel_efficiency => 0
+    assert !AutomobileMake.table_warnings.any? { |w| w =~ /blanks in.*fuel_efficiency.*column/ }
   end
 end
