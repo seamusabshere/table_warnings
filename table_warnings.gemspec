@@ -19,6 +19,6 @@ Gem::Specification.new do |s|
   s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths = ['lib']
   s.add_development_dependency 'fastercsv'
-  s.add_development_dependency 'earth', '0.3.11'
-  s.add_dependency 'activerecord' # for now
+  s.add_development_dependency 'earth'
+  s.add_dependency 'activerecord'
 end
