@@ -2,6 +2,7 @@ module TableWarnings
   class Warning
     autoload :Blank, 'table_warnings/warning/blank'
     autoload :Size, 'table_warnings/warning/size'
+    autoload :Arbitrary, 'table_warnings/warning/arbitrary'
     
     attr_reader :table
     

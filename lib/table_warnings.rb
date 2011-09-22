@@ -37,6 +37,12 @@ module TableWarnings
     warning = ::TableWarnings::Warning::Size.new :table => self, :approximate_size => approximate_size
     ::TableWarnings.config.warnings[self].add warning
   end
+  
+  # An arbitrary warning.
+  def warn(&blk)
+    warning = ::TableWarnings::Warning::Arbitrary.new :table => self, :blk => blk
+    ::TableWarnings.config.warnings[self].add warning
+  end
 end
 
 unless ::ActiveRecord::Base.method_defined? :table_warnings
