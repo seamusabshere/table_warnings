@@ -5,7 +5,7 @@ module TableWarnings
       
       def messages
         if m = blk.call
-          [m].flatten
+          [m].flatten.select(&:present?)
         end
       end
     end

@@ -1,3 +1,6 @@
+require 'active_support'
+require 'active_support/version'
+require 'active_support/core_ext' if ::ActiveSupport::VERSION::MAJOR >= 3
 require 'active_record'
 
 module TableWarnings

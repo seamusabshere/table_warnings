@@ -23,6 +23,6 @@ Gem::Specification.new do |s|
 
   s.add_development_dependency 'fastercsv'
   s.add_development_dependency 'rake'
-  s.add_development_dependency 'mini_record'
+  s.add_development_dependency 'mini_record-compat'
   s.add_development_dependency 'sqlite3'
 end
