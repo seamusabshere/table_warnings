@@ -1,64 +1,59 @@
 require 'helper'
 
-class AutomobileMake < ActiveRecord::Base
-  col :name
-  col :fuel_efficiency, :type => :float
-  col :fuel_efficiency_units
-    
-  warn_if_blanks_in :name
-  warn_if_blanks_in :fuel_efficiency
-  warn_unless_size_is :hundreds
-  warn do
-    if exists? ['fuel_efficiency < ?', 0]
-      "That's a strange looking fuel efficiency"
+describe TableWarnings do
+  describe :warn_if_nulls_except do
+    it "warns if nils in any columns except those listed" do
+      assert_causes_warning AutomobileVariant, /null.*year/i do
+        AutomobileVariant.force_create! :row_hash => 'bad', :year => nil
+      end
     end
   end
-end
 
-class AutomobileFuelType < ActiveRecord::Base
-  col :name
-  col :code
-  col :fuel_efficiency, :type => :float
-  col :fuel_efficiency_units
-
-  warn_if_any_blanks
-  warn_unless_size_is 1..6
-end
-
-AutomobileMake.auto_upgrade!
-AutomobileFuelType.auto_upgrade!
-
-class TestTableWarnings < Test::Unit::TestCase
-  def setup
-    AutomobileMake.delete_all
-    AutomobileFuelType.delete_all
-  end
-  
-  def test_001_warn_for_blanks_in_specific_columns
-    AutomobileMake.create! :name => '       ', :fuel_efficiency => nil, :fuel_efficiency_units => 'kilometres_per_litre'
-    AutomobileMake.create! :name => 'Alfa Romeo', :fuel_efficiency => 10.4075, :fuel_efficiency_units => 'kilometres_per_litre'
-    assert AutomobileMake.table_warnings.one? { |w| w =~ /blanks.*name.*column/ }
-    assert AutomobileMake.table_warnings.one? { |w| w =~ /blanks.*fuel_efficiency.*column/ }
-  end
-  
-  def test_002_warn_of_size
-    assert AutomobileMake.table_warnings.one? { |w| w =~ /expected.*100\.\.1000/ }
-    assert AutomobileFuelType.table_warnings.one? { |w| w =~ /expected.*1\.\.6/ }
+  describe :warn_if_nulls_in do
+    it "warns if nils in certain columns" do
+      assert_causes_warning AutomobileMake, /null.*fuel_efficiency/i do
+        AutomobileMake.force_create! :name => 'bad', :fuel_efficiency => nil
+      end
+    end
   end
 
-  def test_003_warn_for_blanks_in_any_column
-    AutomobileFuelType.create! :name => 'gas'
-    assert AutomobileFuelType.table_warnings.one? { |w| w =~ /blanks.*code.*column/ }
-    assert AutomobileFuelType.table_warnings.many? { |w| w =~ /blanks.*fuel_efficiency.*column/ }
+  describe :warn_if_blanks_in do
+    it "warns if blanks in certain columns" do
+      assert_causes_warning AutomobileMake, /blank.*name/ do
+        AutomobileMake.force_create! :name => '       '
+      end
+    end
+
+    it "doesn't treat 0 as blank" do
+      AutomobileMake.force_create! :name => 'Acme', :fuel_efficiency => 0
+      assert_no_warning AutomobileMake, /blank.*fuel_efficiency/
+    end
   end
 
-  def test_004_dont_treat_0_as_blank
-    AutomobileMake.create! :name => 'Acme', :fuel_efficiency => 0
-    assert !AutomobileMake.table_warnings.any? { |w| w =~ /blanks.*fuel_efficiency.*column/ }
+  describe :warn_unless_size_is do
+    it "warns unless size is as expected" do
+      assert_causes_warning AutomobileMake, /expected.*10\.\.100/ do
+        AutomobileMake.delete_all
+      end  
+      assert_causes_warning AutomobileFuel, /expected.*1\.\.10/ do
+        AutomobileFuel.delete_all
+      end
+    end
   end
-  
-  def test_005_warn_if_arbitrary_block
-    AutomobileMake.create! :name => 'Acme', :fuel_efficiency => -5
-    assert AutomobileMake.table_warnings.one? { |w| w =~ /strange looking fuel efficiency/ }
+
+  describe :warn_if_any_blanks do
+    it "warns if blanks in any column" do
+      assert_causes_warning AutomobileFuel, [/blank.*energy_content/, /blank.*code/] do
+        AutomobileFuel.force_create! :name => 'bad', :code => ' ', :energy_content => nil
+      end  
+    end
+  end
+
+  describe :warn_if do
+    it "runs an arbitrary block to create warnings" do
+      assert_causes_warning AutomobileMake, /strange looking fuel efficiency/ do
+        AutomobileMake.force_create! :name => 'Acme', :fuel_efficiency => -5
+      end
+    end
   end
 end

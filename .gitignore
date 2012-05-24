@@ -4,3 +4,4 @@ pkg/*
 rdoc/*
 data_miner.log
 Gemfile.lock
+.DS_Store

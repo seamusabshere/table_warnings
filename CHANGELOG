@@ -1,0 +1,8 @@
+* Breaking changes
+
+  * Renamed warn -> warn_if to avoid conflict with Kernel.warn
+
+* Enhancements
+
+  * Got rid of autoload
+  * Added warn_if_nulls_except

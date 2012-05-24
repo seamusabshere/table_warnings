@@ -1,5 +1,5 @@
-require 'bundler'
-Bundler::GemHelper.install_tasks
+#!/usr/bin/env rake
+require "bundler/gem_tasks"
 
 require 'rake'
 require 'rake/testtask'
@@ -11,12 +11,7 @@ end
 
 task :default => :test
 
-require 'rake/rdoctask'
-Rake::RDocTask.new do |rdoc|
-  version = TableWarnings::VERSION
-
-  rdoc.rdoc_dir = 'rdoc'
-  rdoc.title = "table_warnings #{version}"
-  rdoc.rdoc_files.include('README*')
-  rdoc.rdoc_files.include('lib/**/*.rb')
+require 'yard'
+YARD::Rake::YardocTask.new do |y|
+  y.options << '--no-private'
 end

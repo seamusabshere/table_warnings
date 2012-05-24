@@ -1,11 +1,9 @@
 # -*- encoding: utf-8 -*-
-$:.push File.expand_path('../lib', __FILE__)
-require 'table_warnings/version'
+require File.expand_path('../lib/table_warnings/version', __FILE__)
 
 Gem::Specification.new do |s|
   s.name        = 'table_warnings'
   s.version     = TableWarnings::VERSION
-  s.platform    = Gem::Platform::RUBY
   s.authors     = ['Seamus Abshere']
   s.email       = ['seamus@abshere.net']
   s.homepage    = 'https://github.com/seamusabshere/table_warnings'
@@ -23,7 +21,10 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'activesupport'
 
   s.add_development_dependency 'fastercsv'
-  s.add_development_dependency 'rake'
-  s.add_development_dependency 'mini_record-compat'
+  s.add_development_dependency 'active_record_inline_schema'
   s.add_development_dependency 'sqlite3'
+  s.add_development_dependency 'minitest'
+  s.add_development_dependency 'minitest-reporters'
+  s.add_development_dependency 'yard'
+  s.add_development_dependency 'data_miner'
 end
