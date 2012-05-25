@@ -39,32 +39,34 @@ end
 PetDelta.auto_upgrade!
 
 describe TableWarnings do
-  it "combines a positive column and a negative column" do
-    assert_causes_warning PetAlpha, [/null.*birthday/i, /null.*sire/i] do
-      PetAlpha.force_create!
+  describe "combinations of positive ('in') and negative ('except') rules" do
+    it "combines a positive column and a negative column" do
+      assert_causes_warning PetAlpha, [/null.*birthday/i, /null.*sire/i] do
+        PetAlpha.force_create!
+      end
     end
-  end
-  it "combines a positive column and a negative regexp" do
-    assert_causes_warning PetBeta, [/null.*birthday/i, /null.*sire/i] do
-      PetBeta.force_create!
+    it "combines a positive column and a negative regexp" do
+      assert_causes_warning PetBeta, [/null.*birthday/i, /null.*sire/i] do
+        PetBeta.force_create!
+      end
     end
-  end
-  it "combines a positive regexp with conditions and a negative regexp" do
-    assert_causes_warning PetGamma, [/null.*sire/i, /null.*certified/i] do
-      PetGamma.force_create!
+    it "combines a positive regexp with conditions and a negative regexp" do
+      assert_causes_warning PetGamma, [/null.*sire/i, /null.*certified/i] do
+        PetGamma.force_create!
+      end
+      PetGamma.delete_all # !
+      assert_causes_warning PetGamma, [/null.*sire/i, /null.*birthday/i] do
+        PetGamma.force_create! :certified => true
+      end
     end
-    PetGamma.delete_all # !
-    assert_causes_warning PetGamma, [/null.*sire/i, /null.*birthday/i] do
-      PetGamma.force_create! :certified => true
-    end
-  end
-  it "combines a positive regexp with conditions and a negative regexp with conditions" do
-    assert_does_not_cause_warning PetDelta do
-      PetDelta.force_create!
-    end
-    PetDelta.delete_all # !
-    assert_causes_warning PetDelta, [/null.*sire/i, /null.*birthday/i] do
-      PetDelta.force_create! :certified => true
+    it "combines a positive regexp with conditions and a negative regexp with conditions" do
+      assert_does_not_cause_warning PetDelta do
+        PetDelta.force_create!
+      end
+      PetDelta.delete_all # !
+      assert_causes_warning PetDelta, [/null.*sire/i, /null.*birthday/i] do
+        PetDelta.force_create! :certified => true
+      end
     end
   end
 end
