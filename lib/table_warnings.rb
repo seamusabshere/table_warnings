@@ -13,6 +13,7 @@ require 'table_warnings/arbitrary'
 require 'table_warnings/null'
 require 'table_warnings/column'
 require 'table_warnings/scout'
+require 'table_warnings/nonexistent_owner'
 
 module TableWarnings
   def TableWarnings.registry
@@ -134,8 +135,11 @@ module TableWarnings
     end
   end
 
-  def warn_if_missing_parent
-    #wip
+  def warn_if_nonexistent_owner(*args)
+    options = args.extract_options!
+    args.flatten.each do |belongs_to_association_name|
+      TableWarnings.registry.add_warning self, TableWarnings::NonexistentOwner.new(self, belongs_to_association_name, options)
+    end
   end
 
 

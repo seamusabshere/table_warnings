@@ -1,8 +1,10 @@
 * Breaking changes
 
-  * Renamed warn -> warn_if to avoid conflict with Kernel.warn
+  * Renamed plain warn -> warn_if to avoid conflict with Kernel.warn
 
 * Enhancements
 
-  * Got rid of autoload
+  * Proper unit tests
   * Added warn_if_nulls_except
+  * Added warn_if_nonexistent_owner
+  * Got rid of autoload
