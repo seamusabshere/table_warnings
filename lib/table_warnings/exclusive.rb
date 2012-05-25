@@ -10,16 +10,20 @@ module TableWarnings
       @scout = Scout.new matcher, options
     end
 
-    def reserve(columns)
-      columns.select do |column|
-        scout.reserve? column
-      end
+    def claims(columns)
+      columns.select { |column| scout.claim? column }
+    end
+
+    def matches(columns)
+      columns.select { |column| scout.match? column }
+    end
+
+    def covers(columns)
+      columns.select { |column| scout.cover? column }
     end
 
     def messages(columns)
-      columns.select do |column|
-        scout.match? column
-      end.map do |column|
+      columns.map do |column|
         message column
       end
     end

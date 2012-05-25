@@ -14,15 +14,24 @@ module TableWarnings
       end
     end
 
+    def warnings_for(table)
+      k = table.to_s
+      if warnings.has_key?(k)
+        warnings[k].dup
+      else
+        []
+      end
+    end
+
     def exclusive(table)
-      (warnings[table.to_s] || []).select do |warning|
-        warning.respond_to? :reserve
+      warnings_for(table).select do |warning|
+        warning.respond_to? :claims
       end
     end
 
     def nonexclusive(table)
-      (warnings[table.to_s] || []).reject do |warning|
-        warning.respond_to? :reserve
+      warnings_for(table).reject do |warning|
+        warning.respond_to? :claims
       end
     end
   end

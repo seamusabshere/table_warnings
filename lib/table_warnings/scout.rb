@@ -18,12 +18,7 @@ module TableWarnings
 
     def match?(column)
       column_name = column.name
-      by_pattern = case pattern
-      when Regexp
-        !!(column_name =~ pattern)
-      else
-        column_name.to_s == pattern.to_s
-      end
+      by_pattern = test column_name
       if positive?
         by_pattern
       else
@@ -31,11 +26,25 @@ module TableWarnings
       end
     end
 
-    def reserve?(column)
-      match?(column) and (conditions? or specific?)
+    def cover?(column)
+      column_name = column.name
+      test column_name
+    end
+
+    def claim?(column)
+      match?(column) and unambiguous?
     end
 
     private
+
+    def test(str)
+      case pattern
+      when Regexp
+        !!(str =~ pattern)
+      else
+        str.to_s == pattern.to_s
+      end
+    end
 
     def positive?
       @positive_query
@@ -45,8 +54,8 @@ module TableWarnings
       @conditions_query
     end
 
-    def specific?
-      !pattern.is_a? Regexp
+    def unambiguous?
+      positive? and not pattern.is_a?(Regexp)
     end
   end
 end

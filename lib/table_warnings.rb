@@ -21,21 +21,61 @@ module TableWarnings
     end
   end
 
+  # used to resolve columns to warnings
+  Disposition = Struct.new(:claims, :covers, :matches)
+
   # Get current warning messages on the table.
-  # warnings.map { |warning| warning.messages }.flatten.compact.sort
   def table_warnings
     messages = []
+
     TableWarnings.registry.nonexclusive(self).each do |warning|
       messages << warning.messages
     end
-    columns = column_names.map do |column_name|
+
+    exclusive = TableWarnings.registry.exclusive(self)
+    pool = column_names.map do |column_name|
       TableWarnings::Column.new self, column_name
     end
-    TableWarnings.registry.exclusive(self).each do |warning|
-      reserved = warning.reserve(columns)
-      messages << warning.messages(columns)
-      columns -= reserved
+
+    map = {}
+    # pass 1 - claims and covers
+    exclusive.each do |warning|
+      disposition = Disposition.new
+      disposition.claims = warning.claims pool
+      disposition.covers = warning.covers pool
+      map[warning] = disposition
+      pool -= disposition.claims
     end
+    if ENV['TABLE_WARNINGS_DEBUG'] == 'true'
+      $stderr.puts "pass 1"
+      map.each do |warning, disposition|
+        $stderr.puts "  #{warning.scout.pattern} - claims=#{disposition.claims.map(&:name)} covers=#{disposition.covers.map(&:name)}"
+      end
+    end
+    # pass 2 - allow regexp matching, but only if somebody else didn't cover it
+    exclusive.each do |warning|
+      disposition = map[warning]
+      disposition.matches = warning.matches(pool).select do |match|
+        map.except(warning).none? { |_, disposition| disposition.covers.include?(match) }
+      end
+      pool -= disposition.matches
+    end
+    if ENV['TABLE_WARNINGS_DEBUG'] == 'true'
+      $stderr.puts "pass 2"
+      map.each do |warning, disposition|
+        $stderr.puts "  #{warning.scout.pattern} - claims=#{disposition.claims.map(&:name)} covers=#{disposition.covers.map(&:name)} matches=#{disposition.matches.map(&:name)}"
+      end
+    end
+    if ENV['TABLE_WARNINGS_STRICT'] == 'true'
+      $stderr.puts "uncovered columns"
+      $stderr.puts pool.join("\n")
+    end
+
+    # now you can generate messages
+    map.each do |warning, disposition|
+      messages << warning.messages(disposition.claims+disposition.matches)
+    end
+
     messages.flatten.compact
   end
   
@@ -44,8 +84,7 @@ module TableWarnings
   # Blank includes both NULL and "" (empty string)
   def warn_if_blanks_in(*args)
     options = args.extract_options!
-    matchers = args.flatten
-    matchers.each do |matcher|
+    args.flatten.each do |matcher|
       TableWarnings.registry.add_warning self, TableWarnings::Blank.new(self, matcher, options)
     end
   end
@@ -53,8 +92,7 @@ module TableWarnings
   # Warn if there are NULLs in a certain column.
   def warn_if_nulls_in(*args)
     options = args.extract_options!
-    matchers = args.flatten
-    matchers.each do |matcher|
+    args.flatten.each do |matcher|
       TableWarnings.registry.add_warning self, TableWarnings::Null.new(self, matcher, options)
     end
   end
@@ -84,16 +122,14 @@ module TableWarnings
 
   def warn_if_nulls_except(*args)
     options = args.extract_options!
-    matchers = args.flatten
-    matchers.each do |matcher|
+    args.flatten.each do |matcher|
       TableWarnings.registry.add_warning self, TableWarnings::Null.new(self, matcher, options.merge(:negative => true))
     end
   end
 
   def warn_if_blanks_except(*args)
     options = args.extract_options!
-    matchers = args.flatten
-    matchers.each do |matcher|
+    args.flatten.each do |matcher|
       TableWarnings.registry.add_warning self, TableWarnings::Blank.new(self, matcher, options.merge(:negative => true))
     end
   end

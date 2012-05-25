@@ -26,5 +26,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'minitest'
   s.add_development_dependency 'minitest-reporters'
   s.add_development_dependency 'yard'
-  s.add_development_dependency 'data_miner'
+  # s.add_development_dependency 'debugger'
 end
