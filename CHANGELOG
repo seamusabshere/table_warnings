@@ -7,4 +7,5 @@
   * Proper unit tests
   * Added warn_if_nulls_except
   * Added warn_if_nonexistent_owner
+  * Added warn_unless_range
   * Got rid of autoload

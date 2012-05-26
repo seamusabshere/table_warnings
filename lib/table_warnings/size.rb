@@ -12,11 +12,11 @@ module TableWarnings
     
     def messages
       current_count = effective_count
-      unless allowed_range.include? current_count
+      unless allowed_size.include? current_count
         if conditions.empty?
-          "Table is not of expected size (expected: #{allowed_range.to_s}, actual: #{current_count})"
+          "Table is not of expected size (expected: #{allowed_size.to_s}, actual: #{current_count})"
         else
-          "Table count with conditions #{conditions.inspect} is not of expected size (expected: #{allowed_range.to_s}, actual: #{current_count})"
+          "Table count with conditions #{conditions.inspect} is not of expected size (expected: #{allowed_size.to_s}, actual: #{current_count})"
         end
       end
     end
@@ -31,7 +31,7 @@ module TableWarnings
       end
     end
 
-    def allowed_range
+    def allowed_size
       case approximate_size
       when :few
         1..10

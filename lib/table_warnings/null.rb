@@ -1,7 +1,7 @@
 module TableWarnings
   class Null < Exclusive
     def message(column)
-      if column.null_count(conditions) > 0
+      if column.nulls?(conditions)
         if conditions.empty?
           "There are NULLs in the #{column.name.inspect} column."
         else

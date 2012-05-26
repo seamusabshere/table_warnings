@@ -14,6 +14,7 @@ require 'table_warnings/null'
 require 'table_warnings/column'
 require 'table_warnings/scout'
 require 'table_warnings/nonexistent_owner'
+require 'table_warnings/range'
 
 module TableWarnings
   def TableWarnings.registry
@@ -79,6 +80,13 @@ module TableWarnings
 
     messages.flatten.compact
   end
+
+  def warn_unless_range(*args)
+    options = args.extract_options!
+    args.flatten.each do |matcher|
+      TableWarnings.registry.add_warning self, TableWarnings::Range.new(self, matcher, options)
+    end
+  end
   
   # Warn if there are blanks in a certain column.
   #
@@ -108,7 +116,7 @@ module TableWarnings
     TableWarnings.registry.add_warning self, TableWarnings::Null.new(self, /.*/)
   end
   
-  # Warn if the number of records falls out of an (approximate) range.
+  # Warn if the number of records falls out of an (approximate) size.
   #
   # Approximations: :few, :tens, :dozens, :hundreds, :thousands, :hundreds_of_thousands, :millions
   # Exact: pass a Range or a Numeric
