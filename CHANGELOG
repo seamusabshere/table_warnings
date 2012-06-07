@@ -4,6 +4,10 @@
 
   * Fix typo in #warn_if_blanks
 
+* Enhancements
+
+  * Actually test #warn_if_blanks and #warn_unless_size
+
 1.0.0 / 2012-06-07
 
 * Breaking changes
