@@ -63,19 +63,16 @@ class MiniTest::Spec
 
   def assert_warning(model, expected_warning)
     hits = model.table_warnings.select { |warning| warning =~ expected_warning }
-    if hits.none?
-      flunk "#{model.name} unexpectedly lacked warning #{expected_warning.inspect}"
-    elsif hits.many?
-      raise ArgumentError, "#{model.name} had MULTIPLE warnings like #{expected_warning.inspect}: #{hits.inspect}"
-    end
+    refute hits.none?, "#{model.name} unexpectedly lacked warning #{expected_warning.inspect}"
+    refute hits.many?, "#{model.name} had MULTIPLE warnings like #{expected_warning.inspect}: #{hits.inspect}"
   end
 
-  def assert_no_warning(model, expected_warning = nil)
+  def assert_no_warning(model, specific_unexpected_warning = nil)
     warnings = model.table_warnings
-    if expected_warning and warnings.any? { |warning| warning =~ expected_warning }
-      flunk "#{model.name} unexpectedly had warning #{expected_warning.inspect}"
-    elsif warnings.any?
-      flunk "#{model.name} unexpectedly had some warnings (#{warnings.inspect})"
+    if specific_unexpected_warning
+      refute(warnings.any? { |warning| warning =~ specific_unexpected_warning }, "#{model.name} unexpectedly had warning #{specific_unexpected_warning.inspect}")
+    else
+      refute warnings.any?, "#{model.name} unexpectedly had some warnings (#{warnings.inspect})"
     end
   end
 
@@ -92,9 +89,7 @@ class MiniTest::Spec
     unexpected_warnings = (model.table_warnings - warnings_before).reject do |warning|
       expected_warnings.any? { |expected_warning| warning =~ expected_warning }
     end
-    if unexpected_warnings.any?
-      flunk "#{model.name} unexpectedly ALSO got warnings #{unexpected_warnings.inspect}"
-    end
+    refute unexpected_warnings.any?, "#{model.name} unexpectedly ALSO got warnings #{unexpected_warnings.inspect}"
   end
 
   def assert_does_not_cause_warning(model)
