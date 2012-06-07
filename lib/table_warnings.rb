@@ -37,11 +37,11 @@ module TableWarnings
     pool = column_names.map do |column_name|
       TableWarnings::Column.new self, column_name
     end
-    exclusive = TableWarnings.registry.exclusive(self)
+    exclusive_warnings = TableWarnings.registry.exclusive(self)
 
     assignments = {}
     # pass 1 - exclusives and covers
-    exclusive.each do |warning|
+    exclusive_warnings.each do |warning|
       disposition = Disposition.new
       disposition.exclusives = warning.exclusives pool
       disposition.covers = warning.covers pool
@@ -55,7 +55,7 @@ module TableWarnings
       end
     end
     # pass 2 - allow regexp matching, but only if somebody else didn't cover it
-    exclusive.each do |warning|
+    exclusive_warnings.each do |warning|
       disposition = assignments[warning]
       disposition.matches = warning.matches(pool).select do |match|
         assignments.except(warning).none? { |_, other| other.covers.include?(match) }
