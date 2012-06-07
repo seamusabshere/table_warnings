@@ -58,7 +58,7 @@ module TableWarnings
     exclusive.each do |warning|
       disposition = assignments[warning]
       disposition.matches = warning.matches(pool).select do |match|
-        assignments.except(warning).none? { |_, disposition| disposition.covers.include?(match) }
+        assignments.except(warning).none? { |_, other| other.covers.include?(match) }
       end
       pool -= disposition.matches
     end
