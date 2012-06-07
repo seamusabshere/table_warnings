@@ -32,12 +32,12 @@ describe TableWarnings do
       Person.force_create! :llc_name => 'My Small Business, LLC'
     end
     it "takes a single belongs-to association name" do
-      assert_causes_warning PetRed, /nonexistent.*handler/i do
+      assert_causes_warning PetRed, /handler.*do not correspond/i do
         PetRed.force_create!
       end
     end
     it "checks the value of foreign keys not just their presence" do
-      assert_causes_warning PetRed, /nonexistent.*handler/i do
+      assert_causes_warning PetRed, /handler.*do not correspond/i do
         PetRed.force_create! :handler_id => 999999
       end
     end
@@ -47,7 +47,7 @@ describe TableWarnings do
       end
     end
     it "regards nulls as nonexistent even if the association primary key column contains nulls" do
-      assert_causes_warning PetBlue, /nonexistent.*trainer/i do
+      assert_causes_warning PetBlue, /trainer.*do not correspond/i do
         PetBlue.force_create!
       end
     end
