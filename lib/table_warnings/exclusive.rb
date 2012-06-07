@@ -7,11 +7,11 @@ module TableWarnings
     def initialize(table, matcher, options = {})
       @table = table
       @conditions = options[:conditions] || {}
-      @scout = Scout.new matcher, options
+      @scout = Scout.new table, matcher, options
     end
 
-    def claims(columns)
-      columns.select { |column| scout.claim? column }
+    def exclusives(columns)
+      columns.select { |column| scout.exclusive? column }
     end
 
     def matches(columns)

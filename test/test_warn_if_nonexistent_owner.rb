@@ -13,16 +13,16 @@ end
 PetRed.auto_upgrade!
 
 class PetBlue < ActiveRecord::Base
-  col :owner_id
-  belongs_to :owner, :class_name => 'Person', :primary_key => :llc_name
-  warn_if_nonexistent_owner :owner
+  col :trainer_id
+  belongs_to :trainer, :class_name => 'Person', :primary_key => :llc_name
+  warn_if_nonexistent_owner :trainer
 end
 PetBlue.auto_upgrade!
 
 class PetGreen < ActiveRecord::Base
-  col :owner_id
-  belongs_to :owner, :class_name => 'Person', :primary_key => :llc_name
-  warn_if_nonexistent_owner :owner, :allow_null => true
+  col :trainer_id
+  belongs_to :trainer, :class_name => 'Person', :primary_key => :llc_name
+  warn_if_nonexistent_owner :trainer, :allow_null => true
 end
 PetGreen.auto_upgrade!
 
@@ -47,7 +47,7 @@ describe TableWarnings do
       end
     end
     it "regards nulls as nonexistent even if the association primary key column contains nulls" do
-      assert_causes_warning PetBlue, /nonexistent.*owner/i do
+      assert_causes_warning PetBlue, /nonexistent.*trainer/i do
         PetBlue.force_create!
       end
     end

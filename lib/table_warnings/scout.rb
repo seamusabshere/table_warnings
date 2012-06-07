@@ -1,10 +1,12 @@
 module TableWarnings
   class Scout
-    attr_reader :pattern
+    attr_reader :table
+    attr_reader :matcher
     attr_reader :conditions
     
-    def initialize(pattern, options = {})
-      @pattern = pattern
+    def initialize(table, matcher, options = {})
+      @table = table
+      @matcher = matcher
       @positive_query = (options[:negative] != true)
       @conditions_query = case options[:conditions]
       when String
@@ -16,33 +18,55 @@ module TableWarnings
       end
     end
 
+    def exclusive?(column)
+      match?(column) and unambiguous?
+    end
+
     def match?(column)
-      column_name = column.name
-      by_pattern = test column_name
+      if association_check? and not column.association
+        return false
+      end
       if positive?
-        by_pattern
+        cover? column
       else
-        !by_pattern
+        not cover?(column)
       end
     end
 
     def cover?(column)
       column_name = column.name
-      test column_name
+      if association_check?
+        associations.any? do |a|
+          a.foreign_key == column_name
+        end
+      else
+        case matcher
+        when Regexp
+          !!(column_name =~ matcher)
+        else
+          column_name.to_s == matcher.to_s
+        end
+      end
     end
 
-    def claim?(column)
-      match?(column) and unambiguous?
+    def enable_association_check!
+      @association_check_query = true
     end
 
     private
 
-    def test(str)
-      case pattern
+    def association_check?
+      @association_check_query
+    end
+
+    def associations
+      @associations ||= case matcher
       when Regexp
-        !!(str =~ pattern)
+        table.reflect_on_all_associations(:belongs_to).select do |a|
+          a.foreign_key =~ matcher
+        end
       else
-        str.to_s == pattern.to_s
+        [ table.reflect_on_association(matcher) ]
       end
     end
 
@@ -55,7 +79,7 @@ module TableWarnings
     end
 
     def unambiguous?
-      positive? and not pattern.is_a?(Regexp)
+      positive? and not matcher.is_a?(Regexp)
     end
   end
 end

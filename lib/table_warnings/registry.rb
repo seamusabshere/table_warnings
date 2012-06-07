@@ -25,13 +25,13 @@ module TableWarnings
 
     def exclusive(table)
       warnings_for(table).select do |warning|
-        warning.respond_to? :claims
+        warning.respond_to? :exclusives
       end
     end
 
     def nonexclusive(table)
       warnings_for(table).reject do |warning|
-        warning.respond_to? :claims
+        warning.respond_to? :exclusives
       end
     end
   end

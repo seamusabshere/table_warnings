@@ -24,7 +24,7 @@ module TableWarnings
   end
 
   # used to resolve columns to warnings
-  Disposition = Struct.new(:claims, :covers, :matches)
+  Disposition = Struct.new(:exclusives, :covers, :matches)
 
   # Get current warning messages on the table.
   def table_warnings
@@ -34,38 +34,38 @@ module TableWarnings
       messages << warning.messages
     end
 
-    exclusive = TableWarnings.registry.exclusive(self)
     pool = column_names.map do |column_name|
       TableWarnings::Column.new self, column_name
     end
+    exclusive = TableWarnings.registry.exclusive(self)
 
-    map = {}
-    # pass 1 - claims and covers
+    assignments = {}
+    # pass 1 - exclusives and covers
     exclusive.each do |warning|
       disposition = Disposition.new
-      disposition.claims = warning.claims pool
+      disposition.exclusives = warning.exclusives pool
       disposition.covers = warning.covers pool
-      map[warning] = disposition
-      pool -= disposition.claims
+      assignments[warning] = disposition
+      pool -= disposition.exclusives
     end
     if ENV['TABLE_WARNINGS_DEBUG'] == 'true'
       $stderr.puts "pass 1"
-      map.each do |warning, disposition|
-        $stderr.puts "  #{warning.scout.pattern} - claims=#{disposition.claims.map(&:name)} covers=#{disposition.covers.map(&:name)}"
+      assignments.each do |warning, disposition|
+        $stderr.puts "  #{warning.scout.matcher} - exclusives=#{disposition.exclusives.map(&:name)} covers=#{disposition.covers.map(&:name)}"
       end
     end
     # pass 2 - allow regexp matching, but only if somebody else didn't cover it
     exclusive.each do |warning|
-      disposition = map[warning]
+      disposition = assignments[warning]
       disposition.matches = warning.matches(pool).select do |match|
-        map.except(warning).none? { |_, disposition| disposition.covers.include?(match) }
+        assignments.except(warning).none? { |_, disposition| disposition.covers.include?(match) }
       end
       pool -= disposition.matches
     end
     if ENV['TABLE_WARNINGS_DEBUG'] == 'true'
       $stderr.puts "pass 2"
-      map.each do |warning, disposition|
-        $stderr.puts "  #{warning.scout.pattern} - claims=#{disposition.claims.map(&:name)} covers=#{disposition.covers.map(&:name)} matches=#{disposition.matches.map(&:name)}"
+      assignments.each do |warning, disposition|
+        $stderr.puts "  #{warning.scout.matcher} - exclusives=#{disposition.exclusives.map(&:name)} covers=#{disposition.covers.map(&:name)} matches=#{disposition.matches.map(&:name)}"
       end
     end
     if ENV['TABLE_WARNINGS_STRICT'] == 'true'
@@ -74,8 +74,8 @@ module TableWarnings
     end
 
     # now you can generate messages
-    map.each do |warning, disposition|
-      messages << warning.messages(disposition.claims+disposition.matches)
+    assignments.each do |warning, disposition|
+      messages << warning.messages(disposition.exclusives+disposition.matches)
     end
 
     messages.flatten.compact
@@ -150,7 +150,12 @@ module TableWarnings
     end
   end
 
-
+  def warn_if_nonexistent_owner_except(*args)
+    options = args.extract_options!
+    args.flatten.each do |belongs_to_association_name|
+      TableWarnings.registry.add_warning self, TableWarnings::NonexistentOwner.new(self, belongs_to_association_name, options.merge(:negative => true))
+    end
+  end
 end
 
 unless ActiveRecord::Base.method_defined? :table_warnings
