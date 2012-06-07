@@ -67,7 +67,8 @@ class MiniTest::Spec
     refute hits.many?, "#{model.name} had MULTIPLE warnings like #{expected_warning.inspect}: #{hits.inspect}"
   end
 
-  def assert_no_warning(model, specific_unexpected_warning = nil)
+  def refute_warning(model, specific_unexpected_warning = nil)
+    raise if block_given?
     warnings = model.table_warnings
     if specific_unexpected_warning
       refute(warnings.any? { |warning| warning =~ specific_unexpected_warning }, "#{model.name} unexpectedly had warning #{specific_unexpected_warning.inspect}")
@@ -79,7 +80,7 @@ class MiniTest::Spec
   def assert_causes_warning(model, expected_warnings)
     expected_warnings = [expected_warnings].flatten
     expected_warnings.each do |expected_warning|
-      assert_no_warning model, expected_warning
+      refute_warning model, expected_warning
     end
     warnings_before = model.table_warnings
     yield
@@ -92,10 +93,10 @@ class MiniTest::Spec
     refute unexpected_warnings.any?, "#{model.name} unexpectedly ALSO got warnings #{unexpected_warnings.inspect}"
   end
 
-  def assert_does_not_cause_warning(model)
-    assert_no_warning model
+  def refute_causes_warning(model)
+    refute_warning model
     yield
-    assert_no_warning model
+    refute_warning model
   end
 
 end

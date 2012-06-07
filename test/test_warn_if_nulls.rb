@@ -79,7 +79,7 @@ describe TableWarnings do
       end
     end
     it "takes a single column and a condition" do
-      assert_does_not_cause_warning Pet5 do
+      refute_causes_warning Pet5 do
         Pet5.force_create!
       end
       assert_causes_warning Pet5, /null.*birthday/i do
@@ -87,7 +87,7 @@ describe TableWarnings do
       end
     end
     it "takes multiple columns and a condition" do
-      assert_does_not_cause_warning Pet6 do
+      refute_causes_warning Pet6 do
         Pet6.force_create!
       end
       assert_causes_warning Pet6, [/null.*birthday/i, /null.*gender/i] do
@@ -95,7 +95,7 @@ describe TableWarnings do
       end
     end
     it "takes a single regexp and a condition" do
-      assert_does_not_cause_warning Pet7 do
+      refute_causes_warning Pet7 do
         Pet7.force_create!
       end
       assert_causes_warning Pet7, /null.*birthday/i do
@@ -103,7 +103,7 @@ describe TableWarnings do
       end
     end
     it "takes multiple regexps and a condition" do
-      assert_does_not_cause_warning Pet8 do
+      refute_causes_warning Pet8 do
         Pet8.force_create!
       end
       assert_causes_warning Pet8, [/null.*birthday/i, /null.*gender/i] do

@@ -60,7 +60,7 @@ describe TableWarnings do
       end
     end
     it "combines a positive regexp with conditions and a negative regexp with conditions" do
-      assert_does_not_cause_warning PetDelta do
+      refute_causes_warning PetDelta do
         PetDelta.force_create!
       end
       PetDelta.delete_all # !

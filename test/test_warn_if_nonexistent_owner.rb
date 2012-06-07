@@ -42,7 +42,7 @@ describe TableWarnings do
       end
     end
     it "doesn't raise false warnings" do
-      assert_does_not_cause_warning PetRed do
+      refute_causes_warning PetRed do
         PetRed.force_create! :handler_id => Person.first.id
       end
     end
@@ -52,7 +52,7 @@ describe TableWarnings do
       end
     end
     it "allows nulls if explicitly requested" do
-      assert_does_not_cause_warning PetGreen do
+      refute_causes_warning PetGreen do
         PetGreen.force_create!
       end
     end

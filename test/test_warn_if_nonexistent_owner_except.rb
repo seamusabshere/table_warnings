@@ -48,7 +48,7 @@ describe TableWarnings do
       end
     end
     it "doesn't raise false warnings" do
-      assert_does_not_cause_warning PetRojo do
+      refute_causes_warning PetRojo do
         PetRojo.force_create! :trainer_id => Gente.first.llc_name
       end
     end
@@ -58,7 +58,7 @@ describe TableWarnings do
       end
     end
     it "allows nulls if explicitly requested" do
-      assert_does_not_cause_warning PetVerde do
+      refute_causes_warning PetVerde do
         PetVerde.force_create!
       end
     end
