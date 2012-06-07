@@ -1,6 +1,7 @@
 * Breaking changes
 
   * Renamed plain warn -> warn_if to avoid conflict with Kernel.warn
+  * Got rid of _in and _is suffixes, so warn_if_blanks_in -> warn_if_blanks
 
 * Enhancements
 

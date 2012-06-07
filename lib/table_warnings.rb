@@ -91,7 +91,7 @@ module TableWarnings
   # Warn if there are blanks in a certain column.
   #
   # Blank includes both NULL and "" (empty string)
-  def warn_if_blanks_in(*args)
+  def warn_if_blanks(*args)
     options = args.extract_options!
     args.flatten.each do |matcher|
       TableWarnings.registry.add_warning self, TableWarnings::Blank.new(self, matcher, options)
@@ -99,7 +99,7 @@ module TableWarnings
   end
   
   # Warn if there are NULLs in a certain column.
-  def warn_if_nulls_in(*args)
+  def warn_if_nulls(*args)
     options = args.extract_options!
     args.flatten.each do |matcher|
       TableWarnings.registry.add_warning self, TableWarnings::Null.new(self, matcher, options)
@@ -120,7 +120,7 @@ module TableWarnings
   #
   # Approximations: :few, :tens, :dozens, :hundreds, :thousands, :hundreds_of_thousands, :millions
   # Exact: pass a Range or a Numeric
-  def warn_unless_size_is(approximate_size, options = {})
+  def warn_unless_size(approximate_size, options = {})
     TableWarnings.registry.add_warning self, TableWarnings::Size.new(self, approximate_size, options)
   end
   

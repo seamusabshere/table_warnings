@@ -4,7 +4,7 @@ class PetAlpha < ActiveRecord::Base
   col :birthday, :type => :datetime
   col :gender
   col :sire
-  warn_if_nulls_in :birthday
+  warn_if_nulls :birthday
   warn_if_nulls_except :gender
 end
 PetAlpha.auto_upgrade!
@@ -13,7 +13,7 @@ class PetBeta < ActiveRecord::Base
   col :birthday, :type => :datetime
   col :gender
   col :sire
-  warn_if_nulls_in :birthday
+  warn_if_nulls :birthday
   warn_if_nulls_except /ende/
 end
 PetBeta.auto_upgrade!
@@ -23,7 +23,7 @@ class PetGamma < ActiveRecord::Base
   col :gender
   col :sire
   col :certified, :type => :boolean
-  warn_if_nulls_in /irthd/, :conditions => { :certified => true }
+  warn_if_nulls /irthd/, :conditions => { :certified => true }
   warn_if_nulls_except /ende/
 end
 PetGamma.auto_upgrade!
@@ -33,7 +33,7 @@ class PetDelta < ActiveRecord::Base
   col :gender
   col :sire
   col :certified, :type => :boolean
-  warn_if_nulls_in /irthd/, :conditions => { :certified => true }
+  warn_if_nulls /irthd/, :conditions => { :certified => true }
   warn_if_nulls_except /ende/, :conditions => { :certified => true }
 end
 PetDelta.auto_upgrade!
@@ -80,6 +80,6 @@ warn_if_nulls_except(
   :carline_class_code,
   :carline_class_name,
 )
-warn_if_nulls_in /alt_fuel_efficiency/, :conditions => 'alt_fuel_code IS NOT NULL'
-warn_if_nulls_in :carline_class, :conditions => 'year < 1998'
+warn_if_nulls /alt_fuel_efficiency/, :conditions => 'alt_fuel_code IS NOT NULL'
+warn_if_nulls :carline_class, :conditions => 'year < 1998'
 =end

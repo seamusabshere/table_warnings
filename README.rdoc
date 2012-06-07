@@ -5,9 +5,9 @@ NOTE: only for activerecord right now because it uses <tt>count(:conditions => [
 ==How to define warning signs
 
     class AutomobileMake < ActiveRecord::Base
-      warn_if_blanks_in :name
-      warn_if_blanks_in :fuel_efficiency
-      warn_unless_size_is :hundreds
+      warn_if_blanks :name
+      warn_if_blanks :fuel_efficiency
+      warn_unless_size :hundreds
     end
 
 ==How to see warnings for the table

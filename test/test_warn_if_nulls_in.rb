@@ -2,34 +2,34 @@ require 'helper'
 
 class Pet1 < ActiveRecord::Base
   col :birthday, :type => :datetime
-  warn_if_nulls_in :birthday
+  warn_if_nulls :birthday
 end
 Pet1.auto_upgrade!
 
 class Pet2 < ActiveRecord::Base
   col :birthday, :type => :datetime
   col :gender
-  warn_if_nulls_in :birthday, :gender
+  warn_if_nulls :birthday, :gender
 end
 Pet2.auto_upgrade!
 
 class Pet3 < ActiveRecord::Base
   col :birthday, :type => :datetime
-  warn_if_nulls_in /irthda/
+  warn_if_nulls /irthda/
 end
 Pet3.auto_upgrade!
 
 class Pet4 < ActiveRecord::Base
   col :birthday, :type => :datetime
   col :gender
-  warn_if_nulls_in /irthda/, /ende/
+  warn_if_nulls /irthda/, /ende/
 end
 Pet4.auto_upgrade!
 
 class Pet5 < ActiveRecord::Base
   col :birthday, :type => :datetime
   col :certified, :type => :boolean
-  warn_if_nulls_in :birthday, :conditions => { :certified => true }
+  warn_if_nulls :birthday, :conditions => { :certified => true }
 end
 Pet5.auto_upgrade!
 
@@ -37,14 +37,14 @@ class Pet6 < ActiveRecord::Base
   col :birthday, :type => :datetime
   col :gender
   col :certified, :type => :boolean
-  warn_if_nulls_in :birthday, :gender, :conditions => { :certified => true }
+  warn_if_nulls :birthday, :gender, :conditions => { :certified => true }
 end
 Pet6.auto_upgrade!
 
 class Pet7 < ActiveRecord::Base
   col :birthday, :type => :datetime
   col :certified, :type => :boolean
-  warn_if_nulls_in /irthda/, :conditions => { :certified => true }
+  warn_if_nulls /irthda/, :conditions => { :certified => true }
 end
 Pet7.auto_upgrade!
 
@@ -52,12 +52,12 @@ class Pet8 < ActiveRecord::Base
   col :birthday, :type => :datetime
   col :gender
   col :certified, :type => :boolean
-  warn_if_nulls_in /irthda/, /ende/, :conditions => { :certified => true }
+  warn_if_nulls /irthda/, /ende/, :conditions => { :certified => true }
 end
 Pet8.auto_upgrade!
 
 describe TableWarnings do
-  describe :warn_if_nulls_in do
+  describe :warn_if_nulls do
     it "takes a single column" do
       assert_causes_warning Pet1, /null.*birthday/i do
         Pet1.force_create!
