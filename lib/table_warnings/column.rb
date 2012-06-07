@@ -16,7 +16,7 @@ module TableWarnings
       table.columns_hash[name].try(:type) == :string
     end
 
-    def blank?(conditions)
+    def blanks?(conditions)
       table.where(conditions).where(["LENGTH(TRIM(#{table.quoted_table_name}.#{name})) = 0"]).count > 0
     end
 
