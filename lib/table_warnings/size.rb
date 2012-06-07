@@ -45,7 +45,7 @@ module TableWarnings
         100_000..1_000_000
       when :millions
         1_000_000..1_000_000_000
-      when Range
+      when ::Range
         approximate_size
       when Numeric
         approximate_size..approximate_size
