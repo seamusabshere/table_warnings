@@ -14,9 +14,9 @@ module TableWarnings
       current_count = effective_count
       unless allowed_size.include? current_count
         if conditions.empty?
-          "Table is not of expected size (expected: #{allowed_size.to_s}, actual: #{current_count})"
+          "Row count is expected to be #{allowed_size.to_s}, but is #{current_count}"
         else
-          "Table count with conditions #{conditions.inspect} is not of expected size (expected: #{allowed_size.to_s}, actual: #{current_count})"
+          "Row count with conditions #{conditions.inspect} is expected to be #{allowed_size.to_s}, but is #{current_count}"
         end
       end
     end
